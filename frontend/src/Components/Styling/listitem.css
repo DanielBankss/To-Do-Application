@@ -1,0 +1,24 @@
+.listitem-container {
+    width: 100%;
+    height: 13vh;
+    background-color: #111;
+    color: #fff;
+    margin-bottom: 3vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.date-text {
+    color: gray;
+}
+
+.list-name {
+    width: 33.3%;
+    font-size: medium;
+}
+
+h4:hover {
+    cursor: pointer;
+}

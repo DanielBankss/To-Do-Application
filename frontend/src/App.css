@@ -11,3 +11,36 @@
 .header-container h2 {
   color: gray;
 }
+
+.main-container {
+  width: 100vw;
+  height: 85vh;
+  display: flex;
+  padding-top: 10vh;
+  justify-content: space-around;
+  background-color: #222;
+}
+
+.view-container {
+  width: 40vw;
+  height: 65vh;
+  color: #fff;
+
+  list-style-type: none;
+  
+}
+
+.view-container li {
+  color: gray;
+}
+
+.add-container {
+  width: 40vw;
+  height: 65vh;
+  background-color: #111;
+}
+
+ul {
+  padding: 0;
+  list-style-type: none;
+}
