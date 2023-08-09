@@ -1,44 +1,83 @@
-import './Styling/listitem.css';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useRef } from "react";
+import "./Styling/listitem.css";
 import { ImCross } from "react-icons/im";
 
-export default function ListItem({ name, date }) {
+export default function ListItem({ name, date, listID }) {
+  let nameRef = useRef();
 
-    function getDateDifference(old) {
+  useEffect(() => {
+    if (new Date(date).getTime() < Date.now()) {
+      complete();
+    }
+  }, [nameRef.current]);
 
-        const diff = old.getTime() - new Date().getTime();
-        let mins = (diff / 60000);
+  function padTo2Digits(num) {
+    return num.toString().padStart(2, "0");
+  }
 
-        if (mins < 60) {
-            if (mins < 1)
-                return `${Math.floor(mins * 60)} seconds ago`
+  function timeConversion() {
+    let target = new Date(date);
 
-            if (mins >= 1 && mins < 2)
-                return `${Math.floor(mins)} minute ago`
+    const diffTime = Math.abs(target.getTime() - Date.now());
 
-            return `${Math.floor(mins)} minutes ago`
-        } else if (mins >= 60 && mins < 1440) {
-            let hours = Math.floor(mins / 60);
-            if (hours <= 1)
-                return `${hours} hour ago`
+    let seconds = Math.floor(diffTime / 1000);
+    let minutes = Math.floor(seconds / 60);
+    let hours = Math.floor(minutes / 60);
 
-            return `${hours} hours ago`
-        } else if (mins >= 1440) {
-            let days = Math.floor(mins / 1440);
-            if (days <= 1)
-                return `${days} day ago`
+    let days = "";
 
-            if (days >= 7)
-                return this.formatDate(old);
+    seconds = seconds % 60;
+    minutes = minutes % 60;
 
-            return `${days} days ago`;
-        }
+    if (minutes === 0) {
+      return `${padTo2Digits(seconds)} Seconds`;
     }
 
-    return (
-        <div className="listitem-container">
-            <h3 className='list-name'>{name}</h3>
-            <h3 className='date-text'>{getDateDifference(date)}</h3>
-            <h4><ImCross color='red' /></h4>
-        </div>
-    )
+    if (hours === 0) {
+      return `${padTo2Digits(minutes)} Minutes, ${padTo2Digits(
+        seconds
+      )} Seconds`;
+    }
+
+    if (hours > 24) {
+      days = Math.floor(hours / 24);
+      hours = hours % 24;
+      return `${days} Days - ${padTo2Digits(hours)} Hours - ${padTo2Digits(
+        minutes
+      )} Minutes - ${padTo2Digits(seconds)} Seconds`;
+    }
+
+    return `${padTo2Digits(hours)} Hours - ${padTo2Digits(
+      minutes
+    )} Minutes - ${padTo2Digits(seconds)} Seconds`;
+  }
+
+  function deleteItem() {
+    fetch("http://localhost:3001/delete/" + listID, { method: "DELETE" })
+      .then(() => {
+        document.getElementById(listID).remove();
+      })
+      .catch((err) => alert(err.message));
+  }
+
+  function complete() {
+    nameRef.current.style.color = "red";
+    if (!document.getElementById(listID + "date").textContent.endsWith("ago"))
+      document.getElementById(listID + "date").textContent += " ago";
+  }
+
+  return (
+    <div className="listitem-container">
+      <h3 className="list-name" ref={nameRef}>
+        {name}
+      </h3>
+      <h3 className="date-text" id={listID + "date"}>
+        {timeConversion()}
+      </h3>
+      <h4 onClick={() => deleteItem()}>
+        <ImCross color="red" />
+      </h4>
+    </div>
+  );
 }

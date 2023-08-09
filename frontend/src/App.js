@@ -1,44 +1,87 @@
-import './App.css';
-import { useEffect, useState } from 'react';
-import ListItem  from "./Components/ListItem";
+import "./App.css";
+import { useEffect, useRef, useState } from "react";
+import ListItem from "./Components/ListItem";
+import Navbar from "./Components/Navbar";
 
 function App() {
+  let [currentList, setCurrentList] = useState([]);
 
-  let [currentList, setCurrentList] = useState(null);
+  let inputReference = useRef();
+  let dateInput = useRef();
 
   useEffect(() => {
-    // api call
-  }, [])
+    fetch("http://localhost:3001/retrieve", {
+      method: "GET",
+    })
+      .then(async (response) => {
+        setCurrentList(await response.json());
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  let createItem = (val) => {
+    if (val === "" || val == null)
+      return alert("Please input a string before trying to add an item!");
+
+    inputReference.current.value = "";
+
+    let targetDay = new Date(dateInput.current.value);
+
+    fetch(
+      "http://localhost:3001/create?value=" +
+        val +
+        "&time=" +
+        targetDay.toISOString(),
+      {
+        method: "POST",
+      }
+    )
+      .then(async (response) => {
+        if (response.ok) {
+          setCurrentList([...currentList, await response.json()]);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
-    <div className="App">
-
-      <header>
-        <div className="header-container">
-          <h1>To-Do Application</h1>
-          <h2>Daniel Banks</h2>
-        </div>
-      </header>
-
+    <>
+      <Navbar />
       <div className="main-container">
-
         <div className="view-container">
           <h1>Current List</h1>
 
           <ul>
-            <li><ListItem name="water the crops very well so they're nice and wet and actually you know grow." date={new Date()}/></li>
-            <li><ListItem name="mow the lawn" date={new Date()}/></li>
-            <li><ListItem name="do this then do that." date={new Date()}/></li>
+            {currentList.length === 0 ? (
+              <h4 style={{ color: "darkgray" }}>No items in the list</h4>
+            ) : (
+              currentList.map((item, index) => (
+                <li key={index} id={item.id}>
+                  <ListItem
+                    name={item.value}
+                    date={item.date}
+                    listID={item.id}
+                  />
+                </li>
+              ))
+            )}
           </ul>
         </div>
 
         <div className="add-container">
-
+          <h2>Add an item</h2>
+          <input
+            type="text"
+            placeholder="Enter item value"
+            ref={inputReference}
+          />
+          <input type="datetime-local" ref={dateInput} />
+          <button onClick={() => createItem(inputReference.current.value)}>
+            Add
+          </button>
         </div>
       </div>
-
-
-    </div>
+    </>
   );
 }
 

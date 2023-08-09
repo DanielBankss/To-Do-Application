@@ -14,7 +14,7 @@
 
 .main-container {
   width: 100vw;
-  height: 85vh;
+  height: 100%;
   display: flex;
   padding-top: 10vh;
   justify-content: space-around;
@@ -23,11 +23,10 @@
 
 .view-container {
   width: 40vw;
-  height: 65vh;
+  height: 100%;
   color: #fff;
-
+  background-color: #222;
   list-style-type: none;
-  
 }
 
 .view-container li {
@@ -38,9 +37,36 @@
   width: 40vw;
   height: 65vh;
   background-color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 ul {
   padding: 0;
   list-style-type: none;
+}
+
+input[type="text"],
+input[type="datetime-local"] {
+  padding: 12px 20px;
+  margin: 8px 0;
+  border-radius: 5px;
+  outline: none;
+  border: none;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+}
+
+.add-container h2 {
+  color: #fff;
+}
+
+.add-container button {
+  padding: 6px 15px;
+  outline: 0;
+  margin: 0;
 }
